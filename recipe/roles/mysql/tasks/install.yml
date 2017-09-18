@@ -1,0 +1,19 @@
+---
+
+- name: Copy MariaDB repo
+  template: src=MariaDB.repo dest=/etc/yum.repos.d/MariaDB.repo
+
+- name: Install MySQL (MariaDB 10.2.x stable)
+  yum: pkg={{ item }}
+  with_items:
+    - MariaDB-server
+    - MariaDB-client
+    - MySQL-python
+
+- name: Start the MySQL service
+  service: name=mariadb state=started enabled=true
+
+- name: Add allow rule for 3306 to firewall
+  firewalld: zone=public port=3306/tcp permanent=true state=enabled
+  notify:
+  - Restart the MySQL service

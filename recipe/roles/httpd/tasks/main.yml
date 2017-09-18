@@ -1,0 +1,42 @@
+---
+
+- name: Install Apache web server
+  yum: pkg={{ item }} state=installed
+  with_items:
+     - httpd
+     - openssl
+     - mod_ssl
+
+- name: Set global ServerName for apache config
+  lineinfile: dest=/etc/httpd/conf/httpd.conf line="ServerName localhost"
+
+- name: SELinux to enforcing
+  command: /sbin/setenforce 0
+  notify:
+    - restart httpd
+
+- name: Ensure Apache running
+  service: name=httpd state=started enabled=yes
+
+- name: copy vhost.conf 
+  template: src=vhost.conf dest=/etc/httpd/conf.d/vhost.conf
+
+- name: copy hosts
+  template: src=hosts.txt dest=/etc/hosts
+
+- name: Allow public to use http service
+  shell:  firewall-cmd --zone=public --add-service=http --permanent
+
+- name: Allow public to port 80 in firewall
+  shell:  firewall-cmd --zone=public --add-port=80/tcp --permanent
+
+- name: Allow public to port 443 in firewall
+  shell:  firewall-cmd --zone=public --add-port=443/tcp --permanent
+
+- name: Reload firewall
+  shell:  firewall-cmd --reload
+
+- name: Flush iptables
+  shell: iptables -F
+
+- service: name=httpd state=restarted

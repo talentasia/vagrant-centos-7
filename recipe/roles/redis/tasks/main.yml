@@ -1,0 +1,21 @@
+---
+- name: make sure yum is up to date
+  yum:
+    name: '*'
+    state: latest
+  become: yes
+- name: make sure redis is installed
+  yum:
+    name: redis
+    state: present
+  become: yes
+- name: make sure redis is running
+  systemd:
+    state: restarted
+    name: redis
+  become: yes
+- name: make sure redis is enabled
+  systemd:
+    enabled: yes
+    name: redis
+  become: yes

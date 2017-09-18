@@ -1,0 +1,10 @@
+---
+
+- name: Finding out if mysql is already installed
+  shell: test -d /var/lib/mysql && echo 'exist' || echo ''
+  register: p
+
+- include: install.yml
+  when: p.stdout!='exist'
+- include: mysql_secure_installation.yml
+  when: p.stdout!='exist'

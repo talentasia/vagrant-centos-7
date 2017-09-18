@@ -1,0 +1,16 @@
+# IDE & DevelopmentTool
+/.vagrant
+/.idea
+/nbproject/private/
+/nbproject/
+/vagrant/.vagrant
+/.bundle
+.vagrant
+.retry
+
+# environment
+.env
+
+# OS
+.DS_Store
+sh.exe.stackdump

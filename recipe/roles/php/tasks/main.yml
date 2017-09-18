@@ -1,0 +1,68 @@
+---
+
+- name: Install remi from remote repo
+  yum: name=http://rpms.famillecollet.com/enterprise/remi-release-7.rpm state=present
+
+- name: upgrade all packages
+  yum: name=* state=latest
+
+- name: Install php
+  yum: pkg={{ item }} enablerepo=remi,remi-php56 state=present
+  with_items:
+    - php
+    - php-common
+
+- name: Install php modules
+  yum: pkg={{ item }} enablerepo=remi,remi-php56 state=present
+  with_items:
+    - php-pecl-apcu
+    - php-cli
+    - php-pear
+    - php-pdo
+    - php-mysqlnd
+    - php-pgsql
+    - php-pecl-mongo
+    - php-sqlite
+    - php-pecl-memcache
+    - php-pecl-memcached
+    - php-gd
+    - php-mbstring
+    - php-mcrypt
+    - php-xml
+    - php-soap
+    - php-intl
+    - php-bcmath
+    - php-xdebug
+  notify:
+  - restart httpd
+
+- name: download composer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/installer
+  tags: composer
+
+- name: install composer
+  shell: cat /tmp/installer | php -- --install-dir=/usr/local/bin
+  args:
+    creates: /usr/local/bin/composer
+  tags: composer
+
+- name: rename composer.phar to composer
+  shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer
+  args:
+    creates: /usr/local/bin/composer
+  tags: composer
+
+- name: make composer executable
+  file:
+    path: /usr/local/bin/composer
+    mode: a+x
+    state: file
+  tags: composer
+
+- name: copy php.ini
+  template: src=php.ini dest=/etc/php.ini
+  notify:
+    restart httpd
+

@@ -1,0 +1,16 @@
+---
+
+- name: update mysql root password
+  mysql_user: name=root
+              host={{ item }}
+              password=Sp8FLc68EEQ2PcGt
+              check_implicit_admin=yes
+              login_user=root
+              login_password=Sp8FLc68EEQ2PcGt
+              state=present
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+

@@ -1,0 +1,12 @@
+---
+- hosts: tas
+  sudo: true
+  user: vagrant
+  roles: 
+    - base
+    - ntpd
+    - httpd
+    - php70
+    - mysql
+    - phpmyadmin
+    - redis

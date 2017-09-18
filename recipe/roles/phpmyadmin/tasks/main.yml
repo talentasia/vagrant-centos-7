@@ -1,0 +1,21 @@
+---
+
+- name: Finding out if phpmyadmin is already cloned
+  shell: test -d /var/www/phpmyadmin && echo 'exist' || echo ''
+  register: p
+
+- name: Downloading phpmyadmin stable if isn't downloaded yet
+  shell: cd /var/www && wget https://github.com/phpmyadmin/phpmyadmin/archive/RELEASE_4_6_6.zip && unzip RELEASE_4_6_6.zip && mv phpmyadmin-RELEASE_4_6_6 phpmyadmin && rm -rf RELEASE_4_6_6.zip
+  when: p.stdout!='exist'
+
+- name: Copy conf for apache
+  template: src=phpmyadmin.tpl dest=/etc/httpd/conf.d/phpmyadmin.conf owner=root group=root mode=0644
+
+- name: Setting firewall rules for phpmyadmin
+  firewalld: zone=public port=9000/tcp permanent=true state=enabled
+
+- name: Flush iptables
+  shell: iptables -F
+
+- name: restart httpd
+  service: name=httpd state=restarted

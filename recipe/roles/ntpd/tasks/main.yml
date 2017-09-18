@@ -1,0 +1,23 @@
+---
+- name: ntp install
+  yum: name="ntp" state=latest
+
+- name: set locale
+  shell: cp /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime
+
+- name: set clock
+  shell: echo "Zone=Asia/Ho_Chi_Minh" > /etc/sysconfig/clock
+
+- name: ntp stop
+  service: name=ntpd state=stopped enabled=yes
+
+- name: update clock
+  shell: ntpdate 0.ubuntu.pool.ntp.org
+
+- name: copy ntp.conf
+  template: src=ntp.conf dest=/etc/ntp.conf
+  notify:
+    restart ntpd
+
+- name: ntp start
+  service: name=ntpd state=restarted enabled=yes
