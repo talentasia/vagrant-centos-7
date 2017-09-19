@@ -50,6 +50,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     node.vm.network :forwarded_port, guest: 443, host: 443, auto_correct: true # ssl
     node.vm.network :forwarded_port, guest: 3306, host: 3306, auto_correct: true # mysql
     node.vm.network :forwarded_port, guest: 9000, host: 9000, auto_correct: true # phpmyadmin
+    node.vm.network :forwarded_port, guest: 27017, host: 27017, auto_correct: true # mongodb
     node.vm.network :private_network, ip: "192.168.69.101"
 
     # set synced folder

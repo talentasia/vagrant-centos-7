@@ -14,6 +14,9 @@
 - name: Setting firewall rules for phpmyadmin
   firewalld: zone=public port=9000/tcp permanent=true state=enabled
 
+- name: Setting firewall rules for mongodb
+  firewalld: zone=public port=27017/tcp permanent=true state=enabled
+
 - name: Flush iptables
   shell: iptables -F
 
